@@ -22,7 +22,18 @@ Route.put('/users/:id', 'UserController.update').middleware('auth')
 
 Route.resource('/posts', 'PostController')
   .apiOnly()
-  .middleware('auth')
+  .except(['index', 'show'])
+  .middleware(['auth', 'is:(administrator || moderator)'])
+
+Route.get('/posts', 'PostController.index').middleware([
+  'auth',
+  'can:read_posts'
+])
+
+Route.get('/posts/:id', 'PostController.show').middleware([
+  'auth',
+  'can:read_posts'
+])
 
 Route.resource('/permissions', 'PermissionController')
   .apiOnly()
